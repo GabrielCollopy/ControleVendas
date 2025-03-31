@@ -1,0 +1,31 @@
+﻿@model IEnumerable<Vendedor>
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+<h2>Esse é a minha index da lista de Vendedores</h2>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Nome</th>
+            <th>Email</th>
+            <th>CPF</th>
+            <th>Editar</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Id</td>
+                <td>@item.nome</td>
+                <td>@item.email</td>
+                <td>@item.cpf</td>
+                <td><a class="btn btn-secondary" asp-action="Edit" asp-route-id="@item.Id">Editar</a></td>
+            </tr>
+        }
+    </tbody>
+</table>
