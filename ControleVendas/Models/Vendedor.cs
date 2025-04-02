@@ -4,7 +4,7 @@ namespace ControleVendas.Models
 {
     public class Vendedor
     {
-        [Required(ErrorMessage = "O campo Id é obrigatório")]
+        
         [Display(Name = "Id do Vendedor")]
         [Range(0, int.MaxValue, ErrorMessage = "Insira um valor válido.")]
         [Key]

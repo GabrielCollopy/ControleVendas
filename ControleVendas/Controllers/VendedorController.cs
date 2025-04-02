@@ -1,80 +1,159 @@
-﻿using ControleVendas.Models;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
+using ControleVendas.Models;
+using ControleVendas.Services;
 
 namespace ControleVendas.Controllers
 {
     public class VendedorController : Controller
     {
-        public IActionResult Index()
+        private readonly AppDbContext _context;
+        private ServiceVendedor _serviceVendedor;
+
+        public VendedorController(AppDbContext context)
         {
-            var lista = new List<Vendedor>();
-            lista.Add(new Vendedor()
-            {
-                cpf = "123.456.789-00",
-                nome = "João",
-                email = "joao@email.com",
-                Id = 1
-            });
-            lista.Add(new Vendedor()
-            {
-                cpf = "123.456.789-01",
-                nome = "Maria",
-                email = "Maria@email.com",
-                Id = 2
-            });
-            lista.Add(new Vendedor()
-            {
-                cpf = "123.456.789-02",
-                nome = "José",
-                email = "jose@email.com",
-                Id = 3
-            });
-            return View(lista);
+            _context = context;
+            _serviceVendedor = new ServiceVendedor(_context);
         }
 
-        [HttpGet]
+        // GET: Vendedor
+        public async Task<IActionResult> Index()
+        {
+            return View(await _context.Vendedores.ToListAsync());
+        }
+
+        // GET: Vendedor/Details/5
+        public async Task<IActionResult> Details(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var vendedor = await _context.Vendedores
+                .FirstOrDefaultAsync(m => m.Id == id);
+            if (vendedor == null)
+            {
+                return NotFound();
+            }
+
+            return View(vendedor);
+        }
+
+        // GET: Vendedor/Create
         public IActionResult Create()
         {
             return View();
         }
 
+        // POST: Vendedor/Create
+        // To protect from overposting attacks, enable the specific properties you want to bind to.
+        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        public IActionResult Create(Vendedor vendedor)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create([Bind("Id,nome,cpf,email")] Vendedor vendedor)
         {
             if (ModelState.IsValid)
             {
-                ViewData["Mensagem"] = "Vendedor cadastrado com sucesso!";
-                return View(vendedor);
+                _context.Add(vendedor);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
             }
-            return View();
+            return View(vendedor);
         }
 
-        public IActionResult Edit(int id)
+        // GET: Vendedor/Edit/5
+        public async Task<IActionResult> Edit(int? id)
         {
-            var lista = new List<Vendedor>();
-            lista.Add(new Vendedor()
+            if (id == null)
             {
-                cpf = "123.456.789-00",
-                nome = "João",
-                email = "joao@email.com",
-                Id = 1
-            });
-            lista.Add(new Vendedor()
+                return NotFound();
+            }
+
+            var vendedor = await _context.Vendedores.FindAsync(id);
+            if (vendedor == null)
             {
-                cpf = "123.456.789-01",
-                nome = "Maria",
-                email = "Maria@email.com",
-                Id = 2
-            });
-            lista.Add(new Vendedor()
-            {
-                cpf = "123.456.789-02",
-                nome = "José",
-                email = "jose@email.com",
-                Id = 3
-            });
-            var vendedor = (from p in lista where p.Id == id select p).FirstOrDefault();
+                return NotFound();
+            }
             return View(vendedor);
+        }
+
+        // POST: Vendedor/Edit/5
+        // To protect from overposting attacks, enable the specific properties you want to bind to.
+        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(int? id, [Bind("Id,nome,cpf,email")] Vendedor vendedor)
+        {
+            if (id != vendedor.Id)
+            {
+                return NotFound();
+            }
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    _context.Update(vendedor);
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!VendedorExists(vendedor.Id))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+                return RedirectToAction(nameof(Index));
+            }
+            return View(vendedor);
+        }
+
+        // GET: Vendedor/Delete/5
+        public async Task<IActionResult> Delete(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var vendedor = await _context.Vendedores
+                .FirstOrDefaultAsync(m => m.Id == id);
+            if (vendedor == null)
+            {
+                return NotFound();
+            }
+
+            return View(vendedor);
+        }
+
+        // POST: Vendedor/Delete/5
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(int? id)
+        {
+            var vendedor = await _context.Vendedores.FindAsync(id);
+            if (vendedor != null)
+            {
+                _context.Vendedores.Remove(vendedor);
+            }
+
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+        }
+
+        private bool VendedorExists(int? id)
+        {
+            return _context.Vendedores.Any(e => e.Id == id);
         }
     }
 }

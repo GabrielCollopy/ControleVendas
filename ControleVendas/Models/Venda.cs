@@ -6,7 +6,7 @@ namespace ControleVendas.Models
 {
     public class Venda
     {
-        [Required(ErrorMessage = "O campo Id é obrigatório")]
+        
         [Display(Name = "Id da Venda")]
         [Range(0, int.MaxValue, ErrorMessage = "Insira um valor válido.")]
         [Key]
@@ -20,7 +20,7 @@ namespace ControleVendas.Models
         [Display(Name = "ID do Vendedor")]
         [ForeignKey("Vendedor")]
         public int vendedorId { get; set; }
-        public virtual Vendedor Vendedor { get; set; }
+        public virtual Vendedor ?Vendedor { get; set; }
 
     }
 }
