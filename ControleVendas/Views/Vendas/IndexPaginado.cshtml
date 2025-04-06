@@ -1,0 +1,42 @@
+﻿@model PaginatedList<ControleVendas.Models.Venda>
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+<h2>Lista de Vendas com Paginação</h2>
+<div>
+    <table id="tabela" class="table table-striped">
+        <thead>
+            <tr>
+                <th>Data Venda</th>
+                <th>Quantidade Vendida</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@Html.DisplayFor(modelItem => item.dataVenda)</td>
+                    <td>@Html.DisplayFor(modelItem => item.quantidade)</td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@item.Id">Editar</a> |
+                        <a asp-action="Details" asp-route-id="@item.Id">Detalhes</a> |
+                        <a asp-action="Delete" asp-route-id="@item.Id">Deletar</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+@if (Model.HasPreviousPage)
+{
+    <a asp-action="IndexPaginado" asp-route-pageNumber="@(Model.PageIndex -1)" class="btn btn-primary">Anterior</a>
+}
+Página @(Model.PageIndex) de @Model.TotalPages
+@if (Model.HasNextPage)
+{
+    <a asp-action="IndexPaginado" asp-route-pageNumber="@(Model.PageIndex + 1)" class="btn btn-primary">Próxima</a>
+}
+</div>

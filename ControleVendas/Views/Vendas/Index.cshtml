@@ -7,35 +7,45 @@
 <h1>Index</h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <button class="btn btn-check" asp-action="Create">Nova Tarefa</button>
 </p>
-<table class="table">
+
+<table id="tabela" class="table table-striped">
     <thead>
         <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.dataVenda)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Vendedor)
-            </th>
+            <th>@Html.DisplayNameFor(model => model.dataVenda)</th>
+            <th>@Html.DisplayNameFor(model => model.Vendedor)</th>
+            <th>@Html.DisplayNameFor(model => model.Produto)</th>
+            <th>@Html.DisplayNameFor(model => model.quantidade)</th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.dataVenda)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Vendedor.cpf)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@Html.DisplayFor(modelItem => item.dataVenda)</td>
+                <td>@Html.DisplayFor(modelItem => item.Vendedor.nome)</td>
+                <td>@Html.DisplayFor(modelItem => item.Produto.nome)</td>
+                <td>@Html.DisplayFor(modelItem => item.quantidade)</td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id">Editar</a> |
+                    <a asp-action="Details" asp-route-id="@item.Id">Detalhes</a> |
+                    <a asp-action="Delete" asp-route-id="@item.Id">Deletar</a>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $("#tabela").DataTable({
+                "language": {
+                    "url": "//cdn.datatables.net/plug-ins/1.13.4/i18n/pt-BR.json"
+                }
+            });
+        });
+    </script>
+}

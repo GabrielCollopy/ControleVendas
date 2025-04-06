@@ -22,5 +22,15 @@ namespace ControleVendas.Models
         public int vendedorId { get; set; }
         public virtual Vendedor ?Vendedor { get; set; }
 
+        [Required(ErrorMessage = "O campo ID do Produto é obrigatório")]
+        [Display(Name = "ID do Produto")]
+        [ForeignKey("Produto")]
+        public int produtoId { get; set; }
+        public virtual Produto? Produto { get; set; }
+
+        [Required(ErrorMessage = "O campo Quantidade é obrigatório")]
+        [Display(Name = "Quantidade do Produto")]
+        public int quantidade { get; set; }
+
     }
 }

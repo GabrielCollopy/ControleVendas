@@ -4,6 +4,7 @@
     ViewData["Title"] = "Create";
 }
 
+
 <h1>Create</h1>
 
 <h4>Venda</h4>
@@ -11,7 +12,6 @@
 <div class="row">
     <div class="col-md-4">
         <form asp-action="Create">
-            <input type="hidden" asp-for="Id" />
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="dataVenda" class="control-label"></label>
@@ -23,16 +23,38 @@
                 <select asp-for="vendedorId" class ="form-control" asp-items="ViewBag.vendedorId"></select>
             </div>
             <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+                <label asp-for="produtoId" class="control-label"></label>
+                <select asp-for="produtoId" class ="form-control" asp-items="ViewBag.produtoId"></select>
+            </div>
+            <div class="form-group">
+                <label asp-for="quantidade" class="control-label"></label>
+                <input asp-for="quantidade" class="form-control" />
+                <span asp-validation-for="quantidade" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <button class="btn btn-primary"><i class="fa-solid fa-floppy-disk"></i>&nbsp;Salvar</button>
             </div>
         </form>
     </div>
 </div>
 
 <div>
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Index">Voltar</a>
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+   @*  @{await Html.RenderPartialAsync("_ValidationScriptsPartial");} *@
+    
+    <script>
+        const mensagem = "@ViewBag.Mensagem";
+
+        if(mensagem != "")
+            {
+              Swal.fire({
+              title: "Cadastro de Vendas",
+              text: "Venda cadastrada com sucesso",
+              icon: "success"
+            });
+        }
+   </script>
 }

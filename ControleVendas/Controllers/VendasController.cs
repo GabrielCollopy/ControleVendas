@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using ControleVendas.Models;
 using ControleVendas.Services;
+using ControleVendas.Helpers;
 
 namespace ControleVendas.Controllers
 {
@@ -21,10 +22,16 @@ namespace ControleVendas.Controllers
             _serviceVenda = new ServiceVenda(_context);
         }
 
+        public async Task CarregarCombos()
+        {
+            ViewData["produtoId"] = new SelectList(await _serviceVenda.RptProduto.ListarTodosAsync(), "Id", "nome");
+            ViewData["vendedorId"] = new SelectList(await _serviceVenda.RptVendedor.ListarTodosAsync(), "Id", "cpf");
+        }
+
         // GET: Vendas
         public async Task<IActionResult> Index()
         {
-            var appDbContext = _context.Vendas.Include(v => v.Vendedor);
+            var appDbContext = _context.Vendas.Include(v => v.Produto).Include(v => v.Vendedor);
             return View(await appDbContext.ToListAsync());
         }
 
@@ -37,6 +44,7 @@ namespace ControleVendas.Controllers
             }
 
             var venda = await _context.Vendas
+                .Include(v => v.Produto)
                 .Include(v => v.Vendedor)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (venda == null)
@@ -48,10 +56,17 @@ namespace ControleVendas.Controllers
         }
 
         // GET: Vendas/Create
-        public async Task<IActionResult> Create()
+        public async Task <IActionResult> Create()
         {
-            ViewData["vendedorId"] = new SelectList(await _serviceVenda.RptVendedor.ListarTodosAsync(), "Id", "cpf");
+            await CarregarCombos();
             return View();
+        }
+
+        public IActionResult IndexPaginado(int pageNumber = 1, int pageSize = 2)
+        {
+            var listaVendas = _serviceVenda.RptVenda.ListarTodos().AsQueryable();
+            var paginatedList = PaginatedList<Venda>.CreateAsync(listaVendas, pageNumber, pageSize);
+            return View(paginatedList);
         }
 
         // POST: Vendas/Create
@@ -59,17 +74,19 @@ namespace ControleVendas.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,dataVenda,vendedorId")] Venda venda)
+        public async Task<IActionResult> Create([Bind("Id,dataVenda,vendedorId,produtoId,quantidade")] Venda venda)
         {
+            await CarregarCombos();
             if (ModelState.IsValid)
             {
+                ViewBag.Mensagem = "Venda cadastrada com sucesso";
                 //_context.Add(venda);
+                //await _context.SaveChangesAsync();
                 await _serviceVenda.RptVenda.IncluirAsync(venda);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                //return RedirectToAction(nameof(Index));
+                //return View(venda);
             }
-            ViewData["vendedorId"] = new SelectList(await _serviceVenda.RptVendedor.ListarTodosAsync(), "Id", "cpf", venda.vendedorId);
-            return View(venda);
+            return View();
         }
 
         // GET: Vendas/Edit/5
@@ -85,7 +102,7 @@ namespace ControleVendas.Controllers
             {
                 return NotFound();
             }
-            ViewData["vendedorId"] = new SelectList(_context.Vendedores, "Id", "cpf", venda.vendedorId);
+            await CarregarCombos();
             return View(venda);
         }
 
@@ -94,7 +111,7 @@ namespace ControleVendas.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int? id, [Bind("Id,dataVenda,vendedorId")] Venda venda)
+        public async Task<IActionResult> Edit(int? id, [Bind("Id,dataVenda,vendedorId,produtoId,quantidade")] Venda venda)
         {
             if (id != venda.Id)
             {
@@ -121,7 +138,7 @@ namespace ControleVendas.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["vendedorId"] = new SelectList(_context.Vendedores, "Id", "cpf", venda.vendedorId);
+            await CarregarCombos();
             return View(venda);
         }
 
@@ -134,6 +151,7 @@ namespace ControleVendas.Controllers
             }
 
             var venda = await _context.Vendas
+                .Include(v => v.Produto)
                 .Include(v => v.Vendedor)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (venda == null)
