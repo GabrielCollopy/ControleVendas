@@ -36,8 +36,7 @@ namespace ControleVendas.Controllers
                 return NotFound();
             }
 
-            var produto = await _context.Produtos
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var produto = await _serviceProduto.RptProduto.SelecionarComIncludeAsync(id.Value);
             if (produto == null)
             {
                 return NotFound();
@@ -63,7 +62,7 @@ namespace ControleVendas.Controllers
             {
 
                 //_context.Add(produto);
-                ViewBag.Mensagem = "Venda cadastrada com sucesso";
+                ViewBag.Mensagem = "Produto cadastrado com sucesso";
                 await _serviceProduto.RptProduto.IncluirAsync(produto);
                 //await _context.SaveChangesAsync();
                 //return RedirectToAction(nameof(Index));
@@ -131,8 +130,7 @@ namespace ControleVendas.Controllers
                 return NotFound();
             }
 
-            var produto = await _context.Produtos
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var produto = await _serviceProduto.RptProduto.SelecionarComIncludeAsync(id.Value);
             if (produto == null)
             {
                 return NotFound();

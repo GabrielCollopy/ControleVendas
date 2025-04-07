@@ -31,7 +31,7 @@ namespace ControleVendas.Controllers
         // GET: Vendas
         public async Task<IActionResult> Index()
         {
-            var vendas = await _serviceVenda.RptVenda.ListarTodosAsync();
+            var vendas = await _serviceVenda.RptVenda.ListarComIncludeAsync();
             return View(vendas);
         }
 
@@ -43,10 +43,7 @@ namespace ControleVendas.Controllers
                 return NotFound();
             }
 
-            var venda = await _context.Vendas
-                .Include(v => v.Produto)
-                .Include(v => v.Vendedor)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var venda = await _serviceVenda.RptVenda.SelecionarComIncludeAsync(id.Value);
             if (venda == null)
             {
                 return NotFound();
@@ -97,7 +94,7 @@ namespace ControleVendas.Controllers
                 return NotFound();
             }
 
-            var venda = await _serviceVenda.RptVenda.SelecionarChaveAsync(id);
+            var venda = await _serviceVenda.RptVenda.SelecionarChaveAsync(id.Value);
             if (venda == null)
             {
                 return NotFound();
@@ -151,10 +148,7 @@ namespace ControleVendas.Controllers
                 return NotFound();
             }
 
-            var venda = await _context.Vendas
-                .Include(v => v.Produto)
-                .Include(v => v.Vendedor)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var venda = await _serviceVenda.RptVenda.SelecionarComIncludeAsync(id.Value);
             if (venda == null)
             {
                 return NotFound();

@@ -36,8 +36,7 @@ namespace ControleVendas.Controllers
                 return NotFound();
             }
 
-            var vendedor = await _context.Vendedores
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var vendedor = await _serviceVendedor.RptVendedor.SelecionarChaveAsync(id);
             if (vendedor == null)
             {
                 return NotFound();
@@ -64,7 +63,7 @@ namespace ControleVendas.Controllers
                 //_context.Add(vendedor);
                 //await _context.SaveChangesAsync();
                 //return RedirectToAction(nameof(Index));
-                ViewBag.Mensagem = "Venda cadastrada com sucesso";
+                ViewBag.Mensagem = "Vendedor cadastrado com sucesso";
                 await _serviceVendedor.RptVendedor.IncluirAsync(vendedor);
             }
             return View(vendedor);
@@ -130,8 +129,7 @@ namespace ControleVendas.Controllers
                 return NotFound();
             }
 
-            var vendedor = await _context.Vendedores
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var vendedor = await _serviceVendedor.RptVendedor.SelecionarChaveAsync(id);
             if (vendedor == null)
             {
                 return NotFound();
