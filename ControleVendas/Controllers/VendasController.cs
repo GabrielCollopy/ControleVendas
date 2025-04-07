@@ -31,8 +31,8 @@ namespace ControleVendas.Controllers
         // GET: Vendas
         public async Task<IActionResult> Index()
         {
-            var appDbContext = _context.Vendas.Include(v => v.Produto).Include(v => v.Vendedor);
-            return View(await appDbContext.ToListAsync());
+            var vendas = await _serviceVenda.RptVenda.ListarTodosAsync();
+            return View(vendas);
         }
 
         // GET: Vendas/Details/5
@@ -97,7 +97,7 @@ namespace ControleVendas.Controllers
                 return NotFound();
             }
 
-            var venda = await _context.Vendas.FindAsync(id);
+            var venda = await _serviceVenda.RptVenda.SelecionarChaveAsync(id);
             if (venda == null)
             {
                 return NotFound();
@@ -122,8 +122,9 @@ namespace ControleVendas.Controllers
             {
                 try
                 {
-                    _context.Update(venda);
-                    await _context.SaveChangesAsync();
+                    //_context.Update(venda);
+                    //await _context.SaveChangesAsync();
+                    await _serviceVenda.RptVenda.AlterarAsync(venda);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -167,13 +168,14 @@ namespace ControleVendas.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int? id)
         {
-            var venda = await _context.Vendas.FindAsync(id);
+            var venda = await _serviceVenda.RptVenda.SelecionarChaveAsync(id);
             if (venda != null)
             {
-                _context.Vendas.Remove(venda);
+                //_context.Vendas.Remove(venda);
+                await _serviceVenda.RptVenda.ExcluirAsync(venda);
             }
 
-            await _context.SaveChangesAsync();
+            //await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 

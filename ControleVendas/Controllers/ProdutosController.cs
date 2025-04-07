@@ -24,7 +24,8 @@ namespace ControleVendas.Controllers
         // GET: Produtos
         public async Task<IActionResult> Index()
         {
-            return View(await _serviceProduto.RptProduto.ListarTodosAsync());
+            var produtos = await _serviceProduto.RptProduto.ListarTodosAsync();
+            return View(produtos);
         }
 
         // GET: Produtos/Details/5
@@ -60,11 +61,12 @@ namespace ControleVendas.Controllers
         {
             if (ModelState.IsValid)
             {
-              
+
                 //_context.Add(produto);
+                ViewBag.Mensagem = "Venda cadastrada com sucesso";
                 await _serviceProduto.RptProduto.IncluirAsync(produto);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                //await _context.SaveChangesAsync();
+                //return RedirectToAction(nameof(Index));
             }
             return View(produto);
         }
@@ -77,7 +79,7 @@ namespace ControleVendas.Controllers
                 return NotFound();
             }
 
-            var produto = await _context.Produtos.FindAsync(id);
+            var produto = await _serviceProduto.RptProduto.SelecionarChaveAsync(id);
             if (produto == null)
             {
                 return NotFound();
@@ -101,8 +103,9 @@ namespace ControleVendas.Controllers
             {
                 try
                 {
-                    _context.Update(produto);
-                    await _context.SaveChangesAsync();
+                    //_context.Update(produto);
+                    //await _context.SaveChangesAsync();
+                    await _serviceProduto.RptProduto.AlterarAsync(produto);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -143,13 +146,14 @@ namespace ControleVendas.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int? id)
         {
-            var produto = await _context.Produtos.FindAsync(id);
+            var produto = await _serviceProduto.RptProduto.SelecionarChaveAsync(id);
             if (produto != null)
             {
-                _context.Produtos.Remove(produto);
+                //_context.Produtos.Remove(produto);
+                await _serviceProduto.RptProduto.ExcluirAsync(produto);
             }
 
-            await _context.SaveChangesAsync();
+            //await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 

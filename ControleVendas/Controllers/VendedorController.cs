@@ -24,7 +24,8 @@ namespace ControleVendas.Controllers
         // GET: Vendedor
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Vendedores.ToListAsync());
+            var vendedores = await _serviceVendedor.RptVendedor.ListarTodosAsync();
+            return View(vendedores);
         }
 
         // GET: Vendedor/Details/5
@@ -60,9 +61,11 @@ namespace ControleVendas.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(vendedor);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                //_context.Add(vendedor);
+                //await _context.SaveChangesAsync();
+                //return RedirectToAction(nameof(Index));
+                ViewBag.Mensagem = "Venda cadastrada com sucesso";
+                await _serviceVendedor.RptVendedor.IncluirAsync(vendedor);
             }
             return View(vendedor);
         }
@@ -75,7 +78,7 @@ namespace ControleVendas.Controllers
                 return NotFound();
             }
 
-            var vendedor = await _context.Vendedores.FindAsync(id);
+            var vendedor = await _serviceVendedor.RptVendedor.SelecionarChaveAsync(id);
             if (vendedor == null)
             {
                 return NotFound();
@@ -99,8 +102,9 @@ namespace ControleVendas.Controllers
             {
                 try
                 {
-                    _context.Update(vendedor);
-                    await _context.SaveChangesAsync();
+                    //_context.Update(vendedor);
+                    //await _context.SaveChangesAsync();
+                    await _serviceVendedor.RptVendedor.AlterarAsync(vendedor);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -141,10 +145,10 @@ namespace ControleVendas.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int? id)
         {
-            var vendedor = await _context.Vendedores.FindAsync(id);
+            var vendedor = await _serviceVendedor.RptVendedor.SelecionarChaveAsync(id);
             if (vendedor != null)
             {
-                _context.Vendedores.Remove(vendedor);
+                await _serviceVendedor.RptVendedor.ExcluirAsync(vendedor);
             }
 
             await _context.SaveChangesAsync();
